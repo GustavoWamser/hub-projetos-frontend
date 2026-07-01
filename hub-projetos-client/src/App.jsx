@@ -10,6 +10,7 @@ function App() {
   const [membros, setMembros] = useState([]);
   const [projetos, setProjetos] = useState([]);
   const [empresas, setEmpresas] = useState([]);
+  const [modalAberto, setModalAberto] = useState(false);
 
   useEffect(() => {
     fetch("http://127.0.0.1:8000/api/membros/")
@@ -29,11 +30,11 @@ function App() {
     <div id="app">
       <SideBar />
       <div id="main">
-        <NavBar />
+        <NavBar onNovo={() => setModalAberto(true)} />
         <Routes>
-          <Route path="/" element={<Projetos projetos={projetos} empresas={empresas} />} />
-          <Route path="/projetos" element={<Projetos projetos={projetos} empresas={empresas} />} />
-          <Route path="/membros" element={<Membros membros={membros} />} />
+          <Route path="/" element={<Projetos projetos={projetos} empresas={empresas} modalAberto={modalAberto} setModalAberto={setModalAberto} />} />
+          <Route path="/projetos" element={<Projetos projetos={projetos} empresas={empresas} modalAberto={modalAberto} setModalAberto={setModalAberto} />} />
+          <Route path="/membros" element={<Membros membros={membros} modalAberto={modalAberto} setModalAberto={setModalAberto} />} />
           <Route path="*" element={<h2>Página Não Encontrada</h2>} />
         </Routes>
       </div>
