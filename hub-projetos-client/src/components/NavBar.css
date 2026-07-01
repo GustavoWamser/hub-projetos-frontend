@@ -1,0 +1,24 @@
+#navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  background-color: #0d0d0d;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+#navbar h1 {
+  color: white;
+  font-size: 18px;
+  margin: 0;
+}
+
+#btn-novo {
+  background-color: #f97316;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}

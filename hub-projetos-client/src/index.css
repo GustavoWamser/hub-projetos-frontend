@@ -1,0 +1,56 @@
+body {
+  background-color: black;
+  margin: 0;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+#app {
+  display: flex;
+  height: 100vh;
+}
+
+#main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+#input-search {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  padding: 16px 24px;
+  background-color: #0d0d0d;
+}
+
+#input-search input {
+  width: 700px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #2a2a2a;
+  background-color: #1a1a1a;
+  color: white;
+  font-size: 14px;
+}
+
+#input-search select {
+  padding: 8px 18px;
+  border-radius: 8px;
+  border: 1px solid #2a2a2a;
+  background-color: #1a1a1a;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.empty {
+  color: #aaa;
+}
+
+#cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  padding: 24px;
+  overflow-y: auto;
+}
