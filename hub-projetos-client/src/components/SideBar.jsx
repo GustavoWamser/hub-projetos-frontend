@@ -1,6 +1,10 @@
+import { useNavigate, useLocation } from "react-router-dom";
 import "./SideBar.css";
 
-function SideBar({ page, setPage }) {
+function SideBar() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   return (
     <div id="sidebar">
       <div id="logo">
@@ -9,10 +13,16 @@ function SideBar({ page, setPage }) {
       </div>
 
       <nav id="menu">
-        <button className={page === "projetos" ? "active" : ""} onClick={() => setPage("projetos")}>
+        <button
+          className={location.pathname === "/projetos" || location.pathname === "/" ? "active" : ""}
+          onClick={() => navigate("/projetos")}
+        >
           📁 Projetos
         </button>
-        <button className={page === "membros" ? "active" : ""} onClick={() => setPage("membros")}>
+        <button
+          className={location.pathname === "/membros" ? "active" : ""}
+          onClick={() => navigate("/membros")}
+        >
           👤 Membros
         </button>
       </nav>
