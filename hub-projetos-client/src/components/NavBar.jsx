@@ -9,7 +9,10 @@ function NavBar({ onNovo }) {
     <div id="navbar">
       <h1>{isProjetos ? "Projetos" : "Membros"}</h1>
       <button id="btn-novo" onClick={onNovo}>
-        {isProjetos ? "＋ Novo Projeto" : "＋ Novo Membro"}
+        <div className="btn-add">
+          <img src="/add.png" alt="add-img" className="add-img"/>
+          {isProjetos ? "Novo Projeto" : "Novo Membro"}
+        </div>
       </button>
     </div>
   );

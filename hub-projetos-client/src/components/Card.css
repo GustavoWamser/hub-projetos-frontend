@@ -11,38 +11,51 @@
   padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
+}
+
+.card:hover {
+  outline: 2px solid #FF720A;
 }
 
 .card-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 16px;
 }
 
 .card-header img {
-  height: 24px;
-  object-fit: contain;
+  height: 80px;
+  width: 80px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid #FF720A;
 }
 
 .card h3 {
   color: white;
-  margin: 0;
-  font-size: 15px;
+  margin: 0 0 4px 0;
+  font-size: 17px;
+  font-weight: 900;
 }
 
 .card p {
   color: #aaa;
   font-size: 12px;
   margin: 0;
+  background-color: #303030;
+  padding: 3px 8px;
+  width: max-content;
+  border-radius: 5px;
 }
 
 .card-footer {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   color: #555;
   font-size: 12px;
-  margin-top: 8px;
+  margin-top: auto;
   border-top: 1px solid #2a2a2a;
   padding-top: 8px;
 }
@@ -52,6 +65,35 @@
   padding: 3px 8px;
   border-radius: 4px;
   font-weight: bold;
+}
+
+.sigla {
+  text-align: center;
+  width: 45px;
+  padding: 3px;
+  background-color: #303030;
+  color: white;
+  font-weight: 1000;
+  border-radius: 10px;
+}
+
+.member-informations {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: #757575;
+}
+
+.member-informations img {
+  filter: invert(40%);
+  max-width: 27px;
+}
+
+.info-item {
+  height: 35px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .concluido { background-color: #16a34a; color: white; }

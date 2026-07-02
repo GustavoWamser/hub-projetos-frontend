@@ -29,6 +29,17 @@ function Card({ tipo, dados }) {
           </div>
         </div>
         <span className="sigla">{dados.sigla}</span>
+        <div className="member-informations">
+          <div className="info-item">
+            <img src="/e-mail.png" alt="E-mail" />
+            <span>{dados.email}</span>
+          </div>
+          
+          <div className="info-item">
+            <img src="/universidade.png" alt="University" />
+            <span>{dados.curso}</span>
+          </div>
+        </div>
       </div>
     );
   }
