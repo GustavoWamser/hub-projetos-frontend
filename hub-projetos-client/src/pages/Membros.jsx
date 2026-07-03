@@ -20,10 +20,12 @@ function Membros({ membros, modalAberto, setModalAberto }) {
     str.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
   const membrosFiltrados = membros
-    .filter(m => filtroBusca === "" ||
-      normalizar(m.nome).includes(normalizar(filtroBusca)) ||
-      normalizar(m.sigla).includes(normalizar(filtroBusca)))
-    .filter(m => filtroCurso === "" || m.curso === filtroCurso);
+  .slice()
+  .sort((a, b) => a.nome.localeCompare(b.nome))
+  .filter(m => filtroBusca === "" ||
+    normalizar(m.nome).includes(normalizar(filtroBusca)) ||
+    normalizar(m.sigla).includes(normalizar(filtroBusca)))
+  .filter(m => filtroCurso === "" || m.curso === filtroCurso);
 
 function handleCriarMembro() {
   const formData = new FormData();
@@ -89,6 +91,15 @@ function fecharModal() {
   setEmail("");
   setCurso("");
   setFoto(null);
+}
+
+function handleApagarMembro() {
+  if (!confirm("Tem certeza que deseja apagar este membro?")) return;
+  axios.delete(`http://127.0.0.1:8000/api/membros/${membroSelecionado.id}/`)
+    .then(() => {
+      fecharModal();
+      window.location.reload();
+    });
 }
 
   return (
@@ -176,11 +187,12 @@ function fecharModal() {
           <input className="input-file" type="file" accept="image/*" onChange={e => setFoto(e.target.files[0])} />
 
           <div id="modal-footer">
+            {membroSelecionado && (
+              <button id="btn-apagar" onClick={handleApagarMembro}>Apagar</button>
+            )}
             <button id="btn-cancelar" onClick={fecharModal}>Cancelar</button>
-            <button 
-              id="btn-salvar" 
-              onClick={membroSelecionado ? handleEditarMembro : handleCriarMembro}>
-              {membroSelecionado ? "Salvar" : "Adicionar Membro"}
+            <button id="btn-salvar" onClick={membroSelecionado ? handleEditarMembro : handleCriarMembro}>
+              {membroSelecionado ? "Salvar" : "Criar Membro"}
             </button>
           </div>
         </Modal>

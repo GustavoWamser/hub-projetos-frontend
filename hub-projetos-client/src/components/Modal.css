@@ -77,7 +77,7 @@
 }
 
 #btn-salvar {
-  background-color: #f97316;
+  background-color: #FF720A;
   border: none;
   border-radius: 8px;
   color: white;
@@ -113,3 +113,11 @@
   border-color: #FF720A;
 }
 
+#btn-apagar {
+  background: transparent;
+  border: none;
+  color: #dc2626;
+  cursor: pointer;
+  font-size: 13px;
+  margin-right: auto;
+}

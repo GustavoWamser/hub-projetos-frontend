@@ -28,6 +28,8 @@ function Projetos({ projetos, empresas, membros, modalAberto, setModalAberto }) 
     str.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
   const projetosFiltrados = projetos
+    .slice()
+    .sort((a, b) => a.nome.localeCompare(b.nome))
     .filter(projeto => filtroBusca === "" || normalizar(projeto.nome).includes(normalizar(filtroBusca)))
     .filter(projeto => filtroSituacao === "" || projeto.situacao === filtroSituacao)
     .filter(projeto => filtroEmpresa === "" || projeto.empresa === parseInt(filtroEmpresa));
@@ -58,30 +60,71 @@ function Projetos({ projetos, empresas, membros, modalAberto, setModalAberto }) 
   }
 
   function handleEditarProjeto() {
-    axios.patch(
-      `http://127.0.0.1:8000/api/projetos/${projetoSelecionado.id}/`,
-      { nome, descricao, empresa, prazo, situacao }
-    ).then(() => {
+  axios.patch(
+    `http://127.0.0.1:8000/api/projetos/${projetoSelecionado.id}/`,
+    {
+      nome,
+      descricao,
+      empresa,
+      prazo,
+      situacao
+    }
+  )
+  .then(() => {
+
+    const apagar = projetoSelecionado.alocacoes.map(alocacao =>
+      axios.delete(
+        `http://127.0.0.1:8000/api/alocacoes/${alocacao.id}/`
+      )
+    );
+
+    return Promise.all(apagar);
+  })
+  .then(() => {
+
+    const criar = membrosSelecionados.map(membro =>
+      axios.post(
+        "http://127.0.0.1:8000/api/alocacoes/",
+        {
+          membro,
+          projeto: projetoSelecionado.id
+        }
+      )
+    );
+
+    return Promise.all(criar);
+  })
+  .then(() => {
+    fecharModal();
+    window.location.reload();
+  });
+}
+
+  function handleApagarProjeto() {
+  if (!confirm("Tem certeza que deseja apagar este projeto?")) return;
+  axios.delete(`http://127.0.0.1:8000/api/projetos/${projetoSelecionado.id}/`)
+    .then(() => {
       fecharModal();
       window.location.reload();
     });
-  }
+}
 
   return (
     <>
       <div id="input-search">
         <input
+          id="filter-search"
           type="text"
           placeholder="Buscar por nome..."
           onChange={e => setFiltroBusca(e.target.value)}
         />
-        <select onChange={e => setFiltroSituacao(e.target.value)}>
+        <select className="filter-select" onChange={e => setFiltroSituacao(e.target.value)}>
           <option value="">Todos os Status</option>
           <option value="Em andamento">Em andamento</option>
           <option value="Concluído">Concluído</option>
           <option value="Cancelado">Cancelado</option>
         </select>
-        <select onChange={e => setFiltroEmpresa(e.target.value)}>
+      <select className="filter-select" onChange={e => setFiltroEmpresa(e.target.value)}>
           <option value="">Empresa Parceira</option>
           {empresas.map(e => (
             <option key={e.id} value={e.id}>{e.nome}</option>
@@ -105,6 +148,7 @@ function Projetos({ projetos, empresas, membros, modalAberto, setModalAberto }) 
               setEmpresa(projeto.empresa);
               setPrazo(projeto.prazo);
               setSituacao(projeto.situacao);
+              setMembrosSelecionados(projeto.alocacoes.map(a => a.membro));
               setModalAberto(true);
             }}
           />
@@ -149,10 +193,12 @@ function Projetos({ projetos, empresas, membros, modalAberto, setModalAberto }) 
             options={opcoesMembros}
             placeholder="Selecione os membros..."
             value={opcoesMembros.filter(op => membrosSelecionados.includes(op.value))}
-            onChange={(opcoes) => setMembrosSelecionados((opcoes || []).map(op => op.value))}
-          />
+            onChange={(opcoes) => setMembrosSelecionados((opcoes || []).map(op => op.value))}/>
 
-          <div id="modal-footer">
+            <div id="modal-footer">
+            {projetoSelecionado && (
+              <button id="btn-apagar" onClick={handleApagarProjeto}>Apagar</button>
+            )}
             <button id="btn-cancelar" onClick={fecharModal}>Cancelar</button>
             <button id="btn-salvar" onClick={projetoSelecionado ? handleEditarProjeto : handleCriarProjeto}>
               {projetoSelecionado ? "Salvar" : "Criar Projeto"}
