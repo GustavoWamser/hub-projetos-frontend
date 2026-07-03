@@ -23,6 +23,8 @@ function Projetos({ projetos, empresas, membros, modalAberto, setModalAberto }) 
     label: m.nome
   }));
 
+  const [projetoSelecionado, setProjetoSelecionado] = useState(null);
+
   const normalizar = (str) =>
     str.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
@@ -32,10 +34,10 @@ function Projetos({ projetos, empresas, membros, modalAberto, setModalAberto }) 
     .filter(projeto => filtroEmpresa === "" || projeto.empresa === parseInt(filtroEmpresa));
 
   function handleCriarProjeto() {
-    axios.post("http://127.0.0", { nome, descricao, empresa, prazo, situacao })
+    axios.post("http://127.0.0.1:8000/api/projetos/", { nome, descricao, empresa, prazo, situacao })
       .then(res => {
-        const alocacoes = membrosSelecionados.map(membro =>
-          axios.post("http://127.0.0", { membro: membro.value, projeto: res.data.id })
+        const alocacoes = membrosSelecionados.map(membroId =>
+          axios.post("http://127.0.0.1:8000/api/alocacoes/", { membro: membroId, projeto: res.data.id })
         );
         return Promise.all(alocacoes);
       })
@@ -43,7 +45,24 @@ function Projetos({ projetos, empresas, membros, modalAberto, setModalAberto }) 
         setModalAberto(false);
         window.location.reload();
       });
-  } 
+  }
+
+  function handleEditarProjeto() {
+  axios.patch(
+    `http://127.0.0.1:8000/api/projetos/${projetoSelecionado.id}/`,
+    {
+      nome,
+      descricao,
+      empresa,
+      prazo,
+      situacao,
+    }
+  ).then(() => {
+    setModalAberto(false);
+    setProjetoSelecionado(null);
+    window.location.reload();
+  });
+}
 
   return (
     <>
@@ -70,23 +89,34 @@ function Projetos({ projetos, empresas, membros, modalAberto, setModalAberto }) 
       <div id="cards">
         {projetosFiltrados.map(projeto => (
           <Card
-            key={projeto.id}
-            tipo="projeto"
-            dados={{
-              ...projeto,
-              empresaNome: empresas.find(e => e.id === projeto.empresa)?.nome
+            key={projeto.id} tipo="projeto" dados={{
+              ...projeto, empresaNome: empresas.find(e => e.id === projeto.empresa)?.nome
             }}
-          />
+            onClick={() => {
+              setProjetoSelecionado(projeto);
+              setNome(projeto.nome);
+              setDescricao(projeto.descricao);
+              setEmpresa(projeto.empresa);
+              setPrazo(projeto.prazo);
+              setSituacao(projeto.situacao);
+              setModalAberto(true);
+            }}/>
         ))}
       </div>
 
       {modalAberto && (
-        <Modal titulo="Novo Projeto" onClose={() => setModalAberto(false)}>
+         <Modal
+            titulo={projetoSelecionado ? "Editar Projeto" : "Novo Projeto"}
+            onClose={() => {
+              setModalAberto(false);
+              setProjetoSelecionado(null);
+            }}>
+
           <label>Nome do Projeto:</label>
-          <input type="text" placeholder="Digite o Nome" onChange={e => setNome(e.target.value)} />
+          <input type="text" value={nome} placeholder="Digite o Nome" onChange={e => setNome(e.target.value)} />
 
           <label>Empresa Parceira:</label>
-          <select onChange={e => setEmpresa(e.target.value)}>
+          <select value={empresa} onChange={e => setEmpresa(e.target.value)}>
             <option value="">Escolha</option>
             {empresas.map(e => (
               <option key={e.id} value={e.id}>{e.nome}</option>
@@ -94,13 +124,13 @@ function Projetos({ projetos, empresas, membros, modalAberto, setModalAberto }) 
           </select>
 
           <label>Descrição do Projeto:</label>
-          <textarea className="placeholder-font" placeholder="Digite a Descrição do Projeto..." onChange={e => setDescricao(e.target.value)} />
+          <textarea className="placeholder-font" value={descricao} placeholder="Digite a Descrição do Projeto..." onChange={e => setDescricao(e.target.value)} />
 
           <label>Prazo do Projeto:</label>
-          <input className="placeholder-font" type="date" onChange={e => setPrazo(e.target.value)} />
+          <input className="placeholder-font" value={prazo} type="date" onChange={e => setPrazo(e.target.value)} />
 
           <label>Situação:</label>
-          <select onChange={e => setSituacao(e.target.value)}>
+          <select value={situacao} onChange={e => setSituacao(e.target.value)}>
             <option value="">Escolha</option>
             <option value="Em andamento">Em andamento</option>
             <option value="Concluído">Concluído</option>
@@ -112,12 +142,15 @@ function Projetos({ projetos, empresas, membros, modalAberto, setModalAberto }) 
             isMulti
             options={opcoesMembros}
             placeholder="Selecione os membros..."
-            value={membrosSelecionados} 
-            onChange={(opcoes) => setMembrosSelecionados(opcoes || [])}/>
+            value={opcoesMembros.filter(op => membrosSelecionados.includes(op))} 
+            onChange={(opcoes) => setMembrosSelecionados((opcoes || []).map(op => op.value))
+          }/>
 
           <div id="modal-footer">
-            <button id="btn-cancelar" onClick={() => setModalAberto(false)}>Cancelar</button>
-            <button id="btn-salvar" onClick={handleCriarProjeto}>Criar Projeto</button>
+            <button id="btn-cancelar" onClick={fecharModal}>Cancelar</button>
+            <button id="btn-salvar" onClick={projetoSelecionado ? handleEditarProjeto : handleCriarProjeto}>
+              {projetoSelecionado ? "Salvar" : "Criar Projeto"}
+            </button>
           </div>
         </Modal>
       )}

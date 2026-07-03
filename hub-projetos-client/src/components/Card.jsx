@@ -1,6 +1,6 @@
 import "./Card.css";
 
-function Card({ tipo, dados }) {
+function Card({ tipo, dados, onClick }) {
   const textoLimpo = dados.situacao
     ? dados.situacao
         .normalize("NFD")
@@ -11,7 +11,7 @@ function Card({ tipo, dados }) {
 
   if (tipo === "projeto") {
     return (
-      <div className="card">
+      <div className="card" onClick={onClick}>
         <div className="card-content">
           <div className="card-header">
             <span className={`status ${textoLimpo}`}>
@@ -42,7 +42,7 @@ function Card({ tipo, dados }) {
 
   if (tipo === "membro") {
     return (
-      <div className="card">
+      <div className="card" onClick={onClick}>
         <div className="card-content">
           <div className="card-header">
             <div className="card-header-left">

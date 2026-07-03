@@ -15,6 +15,8 @@ function Membros({ membros, modalAberto, setModalAberto }) {
   const [filtroBusca, setFiltroBusca] = useState("");
   const [filtroCurso, setFiltroCurso] = useState("");
 
+  const [membroSelecionado, setMembroSelecionado] = useState(null)
+
   const normalizar = (str) =>
     str.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
@@ -24,22 +26,71 @@ function Membros({ membros, modalAberto, setModalAberto }) {
       normalizar(m.sigla).includes(normalizar(filtroBusca)))
     .filter(m => filtroCurso === "" || m.curso === filtroCurso);
 
-  function handleCriarMembro() {
-    const formData = new FormData();
-    formData.append("nome", nome);
-    formData.append("cargo", cargo);
-    formData.append("sigla", sigla);
-    formData.append("email", email);
-    formData.append("curso", curso);
-    if (foto) formData.append("foto", foto);
+function handleCriarMembro() {
+  const formData = new FormData();
 
-    axios.post("http://127.0.0.1:8000/api/membros/", formData, {
-      headers: { "Content-Type": "multipart/form-data" }
-    }).then(() => {
-      setModalAberto(false);
-      window.location.reload();
-    });
+  formData.append("nome", nome);
+  formData.append("cargo", cargo);
+  formData.append("sigla", sigla);
+  formData.append("email", email);
+  formData.append("curso", curso);
+
+  if (foto) {
+    formData.append("foto", foto);
   }
+
+  axios.post(
+    "http://127.0.0.1:8000/api/membros/",
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  ).then(() => {
+    fecharModal();
+    window.location.reload();
+  });
+}
+
+function handleEditarMembro() {
+  const formData = new FormData();
+
+  formData.append("nome", nome);
+  formData.append("cargo", cargo);
+  formData.append("sigla", sigla);
+  formData.append("email", email);
+  formData.append("curso", curso);
+
+  if (foto) {
+    formData.append("foto", foto);
+  }
+
+  axios.patch(
+    `http://127.0.0.1:8000/api/membros/${membroSelecionado.id}/`,
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  ).then(() => {
+    fecharModal();
+    window.location.reload();
+  });
+}
+
+function fecharModal() {
+  setModalAberto(false);
+  setMembroSelecionado(null);
+
+  setNome("");
+  setCargo("");
+  setSigla("");
+  setEmail("");
+  setCurso("");
+  setFoto(null);
+}
 
   return (
     <>
@@ -63,23 +114,37 @@ function Membros({ membros, modalAberto, setModalAberto }) {
 
       <div id="cards">
         {membrosFiltrados.map(membro => (
-          <Card key={membro.id} tipo="membro" dados={membro} />
+        <Card
+          key={membro.id}
+          tipo="membro"
+          dados={membro}
+          onClick={() => {
+            setMembroSelecionado(membro);
+            setNome(membro.nome);
+            setCargo(membro.cargo);
+            setSigla(membro.sigla);
+            setEmail(membro.email);
+            setCurso(membro.curso);
+
+            setModalAberto(true);
+          }}/>
         ))}
       </div>
 
       {modalAberto && (
-        <Modal titulo="Novo Membro" onClose={() => setModalAberto(false)}>
+        <Modal titulo={membroSelecionado ? "Editar Membro" : "Novo Membro"} 
+        onClose={fecharModal}>
           <label>Nome:</label>
-          <input type="text" placeholder="Digite o Nome" onChange={e => setNome(e.target.value)} />
+          <input type="text" value={nome} placeholder="Digite o Nome" onChange={e => setNome(e.target.value)} />
 
           <label>Sigla:</label>
-          <input type="text" placeholder="Ex: GWX" onChange={e => setSigla(e.target.value)} />
+          <input type="text" value={sigla} placeholder="Ex: GWX" onChange={e => setSigla(e.target.value)} />
 
           <label>Email:</label>
-          <input type="email" placeholder="Digite o Email" onChange={e => setEmail(e.target.value)} />
+          <input type="email" value={email} placeholder="Digite o Email" onChange={e => setEmail(e.target.value)} />
 
           <label>Cargo:</label>
-          <select onChange={e => setCargo(e.target.value)}>
+          <select value={cargo} onChange={e => setCargo(e.target.value)}>
             <option value="">Escolha</option>
             <option value="AG LID">AG LID</option>
             <option value="AG PRJ">AG PRJ</option>
@@ -97,7 +162,7 @@ function Membros({ membros, modalAberto, setModalAberto }) {
           </select>
 
           <label>Curso:</label>
-          <select onChange={e => setCurso(e.target.value)}>
+          <select value={curso} onChange={e => setCurso(e.target.value)}>
             <option value="">Escolha</option>
             <option value="Engenharia Mecânica">Engenharia Mecânica</option>
             <option value="Engenharia de Produção">Engenharia de Produção</option>
@@ -112,8 +177,12 @@ function Membros({ membros, modalAberto, setModalAberto }) {
           <input className="input-file" type="file" accept="image/*" onChange={e => setFoto(e.target.files[0])} />
 
           <div id="modal-footer">
-            <button id="btn-cancelar" onClick={() => setModalAberto(false)}>Cancelar</button>
-            <button id="btn-salvar" onClick={handleCriarMembro}>Adicionar Membro</button>
+            <button id="btn-cancelar" onClick={fecharModal}>Cancelar</button>
+            <button 
+              id="btn-salvar" 
+              onClick={membroSelecionado ? handleEditarMembro : handleCriarMembro}>
+              {membroSelecionado ? "Salvar" : "Adicionar Membro"}
+            </button>
           </div>
         </Modal>
       )}
