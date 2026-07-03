@@ -1,20 +1,40 @@
 import "./Card.css";
 
-function Card({ tipo, dados, onEditar }) {
+function Card({ tipo, dados }) {
+  const textoLimpo = dados.situacao
+    ? dados.situacao
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .replace(/\s+/g, "-")
+    : "";
+
   if (tipo === "projeto") {
     return (
       <div className="card">
-        <div className="card-header">
-          <span className={`status ${dados.situacao.toLowerCase()}`}>{dados.situacao}</span>
-          <div className="card-header-right">
-            <span className="empresa-nome">{dados.empresaNome}</span>
+        <div className="card-content">
+          <div className="card-header">
+            <span className={`status ${textoLimpo}`}>
+              {dados.situacao}
+            </span>
           </div>
+
+          <h3>{dados.nome}</h3>
+          <span className="empresa-nome">{dados.empresaNome}</span>
+
+          <p className="descricao-p">{dados.descricao}</p>
         </div>
-        <h3>{dados.nome}</h3>
-        <p>{dados.descricao}</p>
+
         <div className="card-footer">
-          <span>📅 {dados.prazo}</span>
-          <span>👥 {dados.alocacoes.length} membros</span>
+          <div className="info-item">
+            <img src="/calendar.png" alt="calendar" />
+            <span>{dados.prazo}</span>
+          </div>
+
+          <div className="info-item">
+            <img src="/members.png" alt="members" />
+            <span>{dados.alocacoes.length} membros</span>
+          </div>
         </div>
       </div>
     );
@@ -23,29 +43,37 @@ function Card({ tipo, dados, onEditar }) {
   if (tipo === "membro") {
     return (
       <div className="card">
-        <div className="card-header">
-          <div className="card-header-left">
-            <img src={dados.foto} alt={dados.nome} />
-            <div>
-              <h3>{dados.nome}</h3>
-              <p>{dados.cargo}</p>
+        <div className="card-content">
+          <div className="card-header">
+            <div className="card-header-left">
+              <img src={dados.foto} alt={dados.nome} />
+
+              <div>
+                <h3>{dados.nome}</h3>
+                <p>{dados.cargo}</p>
+              </div>
             </div>
           </div>
-        </div>
-        <span className="sigla">{dados.sigla}</span>
-        <div className="member-informations">
-          <div className="info-item">
-            <img src="/e-mail.png" alt="E-mail" />
-            <span>{dados.email}</span>
-          </div>
-          <div className="info-item">
-            <img src="/universidade.png" alt="University" />
-            <span>{dados.curso}</span>
+
+          <span className="sigla">{dados.sigla}</span>
+
+          <div className="member-informations">
+            <div className="info-item">
+              <img src="/e-mail.png" alt="E-mail" />
+              <span>{dados.email}</span>
+            </div>
+
+            <div className="info-item">
+              <img src="/universidade.png" alt="Universidade" />
+              <span>{dados.curso}</span>
+            </div>
           </div>
         </div>
       </div>
     );
   }
+
+  return null;
 }
 
 export default Card;
