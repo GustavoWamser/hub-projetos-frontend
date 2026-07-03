@@ -1,10 +1,9 @@
 import { useState } from "react";
 import axios from "axios";
-import Select from "react-select"; 
+import Select from "react-select";
 import Card from "../components/Card";
 import Modal from "../components/Modal";
 import "./Select.css";
-
 
 function Projetos({ projetos, empresas, membros, modalAberto, setModalAberto }) {
   const [nome, setNome] = useState("");
@@ -18,12 +17,12 @@ function Projetos({ projetos, empresas, membros, modalAberto, setModalAberto }) 
   const [filtroSituacao, setFiltroSituacao] = useState("");
   const [filtroEmpresa, setFiltroEmpresa] = useState("");
 
+  const [projetoSelecionado, setProjetoSelecionado] = useState(null);
+
   const opcoesMembros = membros.map(m => ({
     value: m.id,
     label: m.nome
   }));
-
-  const [projetoSelecionado, setProjetoSelecionado] = useState(null);
 
   const normalizar = (str) =>
     str.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
@@ -32,6 +31,17 @@ function Projetos({ projetos, empresas, membros, modalAberto, setModalAberto }) 
     .filter(projeto => filtroBusca === "" || normalizar(projeto.nome).includes(normalizar(filtroBusca)))
     .filter(projeto => filtroSituacao === "" || projeto.situacao === filtroSituacao)
     .filter(projeto => filtroEmpresa === "" || projeto.empresa === parseInt(filtroEmpresa));
+
+  function fecharModal() {
+    setModalAberto(false);
+    setProjetoSelecionado(null);
+    setNome("");
+    setDescricao("");
+    setEmpresa("");
+    setPrazo("");
+    setSituacao("");
+    setMembrosSelecionados([]);
+  }
 
   function handleCriarProjeto() {
     axios.post("http://127.0.0.1:8000/api/projetos/", { nome, descricao, empresa, prazo, situacao })
@@ -42,27 +52,20 @@ function Projetos({ projetos, empresas, membros, modalAberto, setModalAberto }) 
         return Promise.all(alocacoes);
       })
       .then(() => {
-        setModalAberto(false);
+        fecharModal();
         window.location.reload();
       });
   }
 
   function handleEditarProjeto() {
-  axios.patch(
-    `http://127.0.0.1:8000/api/projetos/${projetoSelecionado.id}/`,
-    {
-      nome,
-      descricao,
-      empresa,
-      prazo,
-      situacao,
-    }
-  ).then(() => {
-    setModalAberto(false);
-    setProjetoSelecionado(null);
-    window.location.reload();
-  });
-}
+    axios.patch(
+      `http://127.0.0.1:8000/api/projetos/${projetoSelecionado.id}/`,
+      { nome, descricao, empresa, prazo, situacao }
+    ).then(() => {
+      fecharModal();
+      window.location.reload();
+    });
+  }
 
   return (
     <>
@@ -89,8 +92,11 @@ function Projetos({ projetos, empresas, membros, modalAberto, setModalAberto }) 
       <div id="cards">
         {projetosFiltrados.map(projeto => (
           <Card
-            key={projeto.id} tipo="projeto" dados={{
-              ...projeto, empresaNome: empresas.find(e => e.id === projeto.empresa)?.nome
+            key={projeto.id}
+            tipo="projeto"
+            dados={{
+              ...projeto,
+              empresaNome: empresas.find(e => e.id === projeto.empresa)?.nome
             }}
             onClick={() => {
               setProjetoSelecionado(projeto);
@@ -100,18 +106,16 @@ function Projetos({ projetos, empresas, membros, modalAberto, setModalAberto }) 
               setPrazo(projeto.prazo);
               setSituacao(projeto.situacao);
               setModalAberto(true);
-            }}/>
+            }}
+          />
         ))}
       </div>
 
       {modalAberto && (
-         <Modal
-            titulo={projetoSelecionado ? "Editar Projeto" : "Novo Projeto"}
-            onClose={() => {
-              setModalAberto(false);
-              setProjetoSelecionado(null);
-            }}>
-
+        <Modal
+          titulo={projetoSelecionado ? "Editar Projeto" : "Novo Projeto"}
+          onClose={fecharModal}
+        >
           <label>Nome do Projeto:</label>
           <input type="text" value={nome} placeholder="Digite o Nome" onChange={e => setNome(e.target.value)} />
 
@@ -127,7 +131,7 @@ function Projetos({ projetos, empresas, membros, modalAberto, setModalAberto }) 
           <textarea className="placeholder-font" value={descricao} placeholder="Digite a Descrição do Projeto..." onChange={e => setDescricao(e.target.value)} />
 
           <label>Prazo do Projeto:</label>
-          <input className="placeholder-font" value={prazo} type="date" onChange={e => setPrazo(e.target.value)} />
+          <input className="placeholder-font" type="date" value={prazo} onChange={e => setPrazo(e.target.value)} />
 
           <label>Situação:</label>
           <select value={situacao} onChange={e => setSituacao(e.target.value)}>
@@ -138,13 +142,15 @@ function Projetos({ projetos, empresas, membros, modalAberto, setModalAberto }) 
           </select>
 
           <label>Membros do Projeto:</label>
-          <Select className="select-member-container" classNamePrefix="select-member"
+          <Select
+            className="select-member-container"
+            classNamePrefix="select-member"
             isMulti
             options={opcoesMembros}
             placeholder="Selecione os membros..."
-            value={opcoesMembros.filter(op => membrosSelecionados.includes(op))} 
-            onChange={(opcoes) => setMembrosSelecionados((opcoes || []).map(op => op.value))
-          }/>
+            value={opcoesMembros.filter(op => membrosSelecionados.includes(op.value))}
+            onChange={(opcoes) => setMembrosSelecionados((opcoes || []).map(op => op.value))}
+          />
 
           <div id="modal-footer">
             <button id="btn-cancelar" onClick={fecharModal}>Cancelar</button>
