@@ -8,7 +8,6 @@ function Card({ tipo, dados, onEditar }) {
           <span className={`status ${dados.situacao.toLowerCase()}`}>{dados.situacao}</span>
           <div className="card-header-right">
             <span className="empresa-nome">{dados.empresaNome}</span>
-            <button className="btn-editar" onClick={() => onEditar(dados)}>☰</button>
           </div>
         </div>
         <h3>{dados.nome}</h3>
@@ -32,7 +31,6 @@ function Card({ tipo, dados, onEditar }) {
               <p>{dados.cargo}</p>
             </div>
           </div>
-          <button className="btn-editar" onClick={() => onEditar(dados)}>☰</button>
         </div>
         <span className="sigla">{dados.sigla}</span>
         <div className="member-informations">

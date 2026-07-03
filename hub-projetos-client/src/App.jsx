@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
+import axios from "axios";
 import SideBar from "./components/SideBar";
 import NavBar from "./components/NavBar";
 import Projetos from "./pages/Projetos";
@@ -13,17 +14,9 @@ function App() {
   const [modalAberto, setModalAberto] = useState(false);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/membros/")
-      .then(res => res.json())
-      .then(data => setMembros(data));
-
-    fetch("http://127.0.0.1:8000/api/projetos/")
-      .then(res => res.json())
-      .then(data => setProjetos(data));
-
-    fetch("http://127.0.0.1:8000/api/empresas/")
-      .then(res => res.json())
-      .then(data => setEmpresas(data));
+    axios.get("http://127.0.0.1:8000/api/membros/").then(res => setMembros(res.data));
+    axios.get("http://127.0.0.1:8000/api/projetos/").then(res => setProjetos(res.data));
+    axios.get("http://127.0.0.1:8000/api/empresas/").then(res => setEmpresas(res.data));
   }, []);
 
   return (

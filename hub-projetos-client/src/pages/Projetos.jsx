@@ -1,4 +1,5 @@
 import { useState } from "react";
+import axios from "axios";
 import Card from "../components/Card";
 import Modal from "../components/Modal";
 
@@ -10,20 +11,24 @@ function Projetos({ projetos, empresas, membros, modalAberto, setModalAberto }) 
   const [situacao, setSituacao] = useState("");
   const [membrosSelecionados, setMembrosSelecionados] = useState([]);
 
+  const [filtroBusca, setFiltroBusca] = useState("");
+  const [filtroSituacao, setFiltroSituacao] = useState("");
+  const [filtroEmpresa, setFiltroEmpresa] = useState("");
+
+  const normalizar = (str) =>
+    str.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+  const projetosFiltrados = projetos
+    .filter(projeto => filtroBusca === "" || normalizar(projeto.nome).includes(normalizar(filtroBusca)))
+    .filter(projeto => filtroSituacao === "" || projeto.situacao === filtroSituacao)
+    .filter(projeto => filtroEmpresa === "" || projeto.empresa === parseInt(filtroEmpresa));
+
   function handleCriarProjeto() {
-    fetch("http://127.0.0.1:8000/api/projetos/", {
-      method: "POST", 
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ nome, descricao, empresa, prazo, situacao })
-    }).then(res => res.json()).then(projeto => {
+    axios.post("http://127.0.0.1:8000/api/projetos/", { nome, descricao, empresa, prazo, situacao })
+      .then(res => {
         const alocacoes = membrosSelecionados.map(membroId =>
-          fetch("http://127.0.0.1:8000/api/alocacoes/", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ membro: membroId, projeto: projeto.id })
-          })
+          axios.post("http://127.0.0.1:8000/api/alocacoes/", { membro: membroId, projeto: res.data.id })
         );
-        
         return Promise.all(alocacoes);
       })
       .then(() => {
@@ -35,15 +40,19 @@ function Projetos({ projetos, empresas, membros, modalAberto, setModalAberto }) 
   return (
     <>
       <div id="input-search">
-        <input type="text" placeholder="Buscar por nome, empresa ou descrição..." />
-        <select>
-          <option>Todos os Status</option>
-          <option>Em andamento</option>
-          <option>Concluído</option>
-          <option>Cancelado</option>
+        <input
+          type="text"
+          placeholder="Buscar por nome..."
+          onChange={e => setFiltroBusca(e.target.value)}
+        />
+        <select onChange={e => setFiltroSituacao(e.target.value)}>
+          <option value="">Todos os Status</option>
+          <option value="Em andamento">Em andamento</option>
+          <option value="Concluído">Concluído</option>
+          <option value="Cancelado">Cancelado</option>
         </select>
-        <select>
-          <option>Empresa Parceira</option>
+        <select onChange={e => setFiltroEmpresa(e.target.value)}>
+          <option value="">Empresa Parceira</option>
           {empresas.map(e => (
             <option key={e.id} value={e.id}>{e.nome}</option>
           ))}
@@ -51,7 +60,7 @@ function Projetos({ projetos, empresas, membros, modalAberto, setModalAberto }) 
       </div>
 
       <div id="cards">
-        {projetos.map(projeto => (
+        {projetosFiltrados.map(projeto => (
           <Card
             key={projeto.id}
             tipo="projeto"

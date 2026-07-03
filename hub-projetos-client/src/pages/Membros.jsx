@@ -1,4 +1,5 @@
 import { useState } from "react";
+import axios from "axios";
 import Card from "../components/Card";
 import Modal from "../components/Modal";
 
@@ -10,6 +11,18 @@ function Membros({ membros, modalAberto, setModalAberto }) {
   const [curso, setCurso] = useState("");
   const [foto, setFoto] = useState(null);
 
+  const [filtroBusca, setFiltroBusca] = useState("");
+  const [filtroCurso, setFiltroCurso] = useState("");
+
+  const normalizar = (str) =>
+    str.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+  const membrosFiltrados = membros
+    .filter(m => filtroBusca === "" ||
+      normalizar(m.nome).includes(normalizar(filtroBusca)) ||
+      normalizar(m.sigla).includes(normalizar(filtroBusca)))
+    .filter(m => filtroCurso === "" || m.curso === filtroCurso);
+
   function handleCriarMembro() {
     const formData = new FormData();
     formData.append("nome", nome);
@@ -19,20 +32,36 @@ function Membros({ membros, modalAberto, setModalAberto }) {
     formData.append("curso", curso);
     if (foto) formData.append("foto", foto);
 
-    fetch("http://127.0.0.1:8000/api/membros/", {method: "POST", body: formData}).then(res => res.json()).then(() => {
-        setModalAberto(false);
-        window.location.reload();
-      });
+    axios.post("http://127.0.0.1:8000/api/membros/", formData, {
+      headers: { "Content-Type": "multipart/form-data" }
+    }).then(() => {
+      setModalAberto(false);
+      window.location.reload();
+    });
   }
 
   return (
     <>
       <div id="input-search">
-        <input type="text" placeholder="Buscar por nome, sigla ou cargo..." />
+        <input
+          type="text"
+          placeholder="Buscar por nome ou sigla..."
+          onChange={e => setFiltroBusca(e.target.value)}
+        />
+        <select onChange={e => setFiltroCurso(e.target.value)}>
+          <option value="">Todos os Cursos</option>
+          <option value="Engenharia Mecânica">Engenharia Mecânica</option>
+          <option value="Engenharia de Produção">Engenharia de Produção</option>
+          <option value="Engenharia de Controle e Automação">Engenharia de Controle e Automação</option>
+          <option value="Engenharia Química">Engenharia Química</option>
+          <option value="Engenharia de Materiais">Engenharia de Materiais</option>
+          <option value="Engenharia Elétrica">Engenharia Elétrica</option>
+          <option value="Engenharia Eletrônica">Engenharia Eletrônica</option>
+        </select>
       </div>
 
       <div id="cards">
-        {membros.map(membro => (
+        {membrosFiltrados.map(membro => (
           <Card key={membro.id} tipo="membro" dados={membro} />
         ))}
       </div>
