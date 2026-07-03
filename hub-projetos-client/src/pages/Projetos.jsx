@@ -86,10 +86,10 @@ function Projetos({ projetos, empresas, membros, modalAberto, setModalAberto }) 
           </select>
 
           <label>Descrição do Projeto:</label>
-          <textarea placeholder="Digite a Descrição do Projeto..." onChange={e => setDescricao(e.target.value)} />
+          <textarea className="placeholder-font" placeholder="Digite a Descrição do Projeto..." onChange={e => setDescricao(e.target.value)} />
 
           <label>Prazo do Projeto:</label>
-          <input type="date" onChange={e => setPrazo(e.target.value)} />
+          <input className="placeholder-font" type="date" onChange={e => setPrazo(e.target.value)} />
 
           <label>Situação:</label>
           <select onChange={e => setSituacao(e.target.value)}>

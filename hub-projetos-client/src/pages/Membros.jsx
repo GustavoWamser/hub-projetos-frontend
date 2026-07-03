@@ -108,7 +108,7 @@ function Membros({ membros, modalAberto, setModalAberto }) {
           </select>
 
           <label>Foto:</label>
-          <input type="file" accept="image/*" onChange={e => setFoto(e.target.files[0])} />
+          <input className="input-file" type="file" accept="image/*" onChange={e => setFoto(e.target.files[0])} />
 
           <div id="modal-footer">
             <button id="btn-cancelar" onClick={() => setModalAberto(false)}>Cancelar</button>
