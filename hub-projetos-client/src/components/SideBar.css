@@ -86,3 +86,11 @@
   object-fit: contain;   
   flex-shrink: 0;        
 }
+
+.footer-icon {
+  filter: invert(40%);
+  width: 20px;           
+  height: 20px;          
+  object-fit: contain;   
+  flex-shrink: 0;        
+}

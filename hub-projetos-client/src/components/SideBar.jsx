@@ -34,11 +34,11 @@ function SideBar() {
 
       <div id="menu-bottom">
         <button>
-          <img src={imgConfig} alt="Configurações" className="sidebar-icon" />
+          <img src={imgConfig} alt="Configurações" className="footer-icon" />
           Configurações
         </button>
         <button>
-          <img src={imgHelp} alt="Ajuda" className="sidebar-icon" />
+          <img src={imgHelp} alt="Ajuda" className="footer-icon" />
           Ajuda & Suporte
         </button>
       </div>

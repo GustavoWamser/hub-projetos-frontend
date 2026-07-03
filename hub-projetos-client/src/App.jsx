@@ -32,8 +32,8 @@ function App() {
       <div id="main">
         <NavBar onNovo={() => setModalAberto(true)} />
         <Routes>
-          <Route path="/" element={<Projetos projetos={projetos} empresas={empresas} modalAberto={modalAberto} setModalAberto={setModalAberto} />} />
-          <Route path="/projetos" element={<Projetos projetos={projetos} empresas={empresas} modalAberto={modalAberto} setModalAberto={setModalAberto} />} />
+          <Route path="/" element={<Projetos projetos={projetos} empresas={empresas} membros={membros} modalAberto={modalAberto} setModalAberto={setModalAberto} />} />
+          <Route path="/projetos" element={<Projetos projetos={projetos} empresas={empresas} membros={membros} modalAberto={modalAberto} setModalAberto={setModalAberto} />} />
           <Route path="/membros" element={<Membros membros={membros} modalAberto={modalAberto} setModalAberto={setModalAberto} />} />
           <Route path="*" element={<h2>Página Não Encontrada</h2>} />
         </Routes>

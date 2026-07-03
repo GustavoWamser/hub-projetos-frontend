@@ -1,12 +1,15 @@
 import "./Card.css";
 
-function Card({ tipo, dados }) {
+function Card({ tipo, dados, onEditar }) {
   if (tipo === "projeto") {
     return (
       <div className="card">
         <div className="card-header">
           <span className={`status ${dados.situacao.toLowerCase()}`}>{dados.situacao}</span>
-          <span className="empresa-nome">{dados.empresaNome}</span>
+          <div className="card-header-right">
+            <span className="empresa-nome">{dados.empresaNome}</span>
+            <button className="btn-editar" onClick={() => onEditar(dados)}>☰</button>
+          </div>
         </div>
         <h3>{dados.nome}</h3>
         <p>{dados.descricao}</p>
@@ -22,11 +25,14 @@ function Card({ tipo, dados }) {
     return (
       <div className="card">
         <div className="card-header">
-          <img src={dados.foto} alt={dados.nome} />
-          <div>
-            <h3>{dados.nome}</h3>
-            <p>{dados.cargo}</p>
+          <div className="card-header-left">
+            <img src={dados.foto} alt={dados.nome} />
+            <div>
+              <h3>{dados.nome}</h3>
+              <p>{dados.cargo}</p>
+            </div>
           </div>
+          <button className="btn-editar" onClick={() => onEditar(dados)}>☰</button>
         </div>
         <span className="sigla">{dados.sigla}</span>
         <div className="member-informations">
@@ -34,7 +40,6 @@ function Card({ tipo, dados }) {
             <img src="/e-mail.png" alt="E-mail" />
             <span>{dados.email}</span>
           </div>
-          
           <div className="info-item">
             <img src="/universidade.png" alt="University" />
             <span>{dados.curso}</span>
