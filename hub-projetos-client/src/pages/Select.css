@@ -1,0 +1,96 @@
+.select-member-container {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.select-member__control {
+  background-color: #2a2a2a !important;
+  border: 2px solid transparent !important;
+  border-radius: 8px !important;
+  min-height: 38px !important;
+  box-shadow: none !important;
+}
+
+.select-member__control--is-focused {
+  border-color: #FF720A !important;
+}
+
+.select-member__input-container,
+.select-member__placeholder {
+  color: #757575 !important;
+  font-size: 13px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.select-member__single-value {
+  color: #757575 !important;
+  font-size: 13px !important;
+}
+
+.select-member__menu {
+  background-color: #2a2a2a !important;
+  border: 1px solid #1a1a1a !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  z-index: 110 !important; 
+}
+
+.select-member__menu-list {
+  padding: 0 !important;
+}
+
+.select-member__option {
+  background-color: transparent !important;
+  color: #757575 !important;
+  font-size: 13px !important;
+  padding: 8px 12px !important;
+  cursor: pointer !important;
+}
+
+.select-member__option--is-focused {
+  background-color: #1a1a1a !important;
+  color: #FF720A !important;
+}
+
+.select-member__option--is-selected {
+  background-color: #FF720A !important;
+  color: white !important;
+}
+
+.select-member__multi-value {
+  background-color: #1a1a1a !important;
+  border-radius: 4px !important;
+  margin: 2px !important;
+}
+
+.select-member__multi-value__label {
+  color: #ffffff !important;
+  font-size: 12px !important;
+  padding: 2px 6px !important;
+}
+
+.select-member__multi-value__remove {
+  color: #757575 !important;
+  cursor: pointer !important;
+}
+
+.select-member__multi-value__remove:hover {
+  background-color: #FF720A !important;
+  color: white !important;
+  border-radius: 0 4px 4px 0 !important;
+}
+
+.select-member__indicator {
+  color: #757575 !important;
+  padding: 6px !important;
+  cursor: pointer !important;
+}
+
+.select-member__indicator:hover {
+  color: #FF720A !important;
+}
+
+.select-member__indicator-separator {
+  display: none !important;
+}

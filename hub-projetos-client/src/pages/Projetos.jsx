@@ -1,7 +1,10 @@
 import { useState } from "react";
 import axios from "axios";
+import Select from "react-select"; 
 import Card from "../components/Card";
 import Modal from "../components/Modal";
+import "./Select.css";
+
 
 function Projetos({ projetos, empresas, membros, modalAberto, setModalAberto }) {
   const [nome, setNome] = useState("");
@@ -15,6 +18,11 @@ function Projetos({ projetos, empresas, membros, modalAberto, setModalAberto }) 
   const [filtroSituacao, setFiltroSituacao] = useState("");
   const [filtroEmpresa, setFiltroEmpresa] = useState("");
 
+  const opcoesMembros = membros.map(m => ({
+    value: m.id,
+    label: m.nome
+  }));
+
   const normalizar = (str) =>
     str.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
@@ -24,10 +32,10 @@ function Projetos({ projetos, empresas, membros, modalAberto, setModalAberto }) 
     .filter(projeto => filtroEmpresa === "" || projeto.empresa === parseInt(filtroEmpresa));
 
   function handleCriarProjeto() {
-    axios.post("http://127.0.0.1:8000/api/projetos/", { nome, descricao, empresa, prazo, situacao })
+    axios.post("http://127.0.0", { nome, descricao, empresa, prazo, situacao })
       .then(res => {
-        const alocacoes = membrosSelecionados.map(membroId =>
-          axios.post("http://127.0.0.1:8000/api/alocacoes/", { membro: membroId, projeto: res.data.id })
+        const alocacoes = membrosSelecionados.map(membro =>
+          axios.post("http://127.0.0", { membro: membro.value, projeto: res.data.id })
         );
         return Promise.all(alocacoes);
       })
@@ -35,7 +43,7 @@ function Projetos({ projetos, empresas, membros, modalAberto, setModalAberto }) 
         setModalAberto(false);
         window.location.reload();
       });
-  }
+  } 
 
   return (
     <>
@@ -100,11 +108,12 @@ function Projetos({ projetos, empresas, membros, modalAberto, setModalAberto }) 
           </select>
 
           <label>Membros do Projeto:</label>
-          <select multiple onChange={e => setMembrosSelecionados([...e.target.selectedOptions].map(o => o.value))}>
-            {membros.map(m => (
-              <option key={m.id} value={m.id}>{m.nome}</option>
-            ))}
-          </select>
+          <Select className="select-member-container" classNamePrefix="select-member"
+            isMulti
+            options={opcoesMembros}
+            placeholder="Selecione os membros..."
+            value={membrosSelecionados} 
+            onChange={(opcoes) => setMembrosSelecionados(opcoes || [])}/>
 
           <div id="modal-footer">
             <button id="btn-cancelar" onClick={() => setModalAberto(false)}>Cancelar</button>

@@ -16,6 +16,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  overflow: visible;
 }
 
 #modal h2 {
@@ -28,6 +29,7 @@
 .placeholder-font  {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
+
 #modal label {
   color: #757575;
   font-size: 12px;
@@ -35,11 +37,11 @@
 
 #modal input,
 #modal select,
-#modal textarea {
+#modal textarea  {
   background-color: #2a2a2a;
   border: 2px solid transparent;
   border-radius: 8px;
-  color: white;
+  color: #757575;
   font-size: 13px;
   padding: 8px 12px;
   width: 100%;
@@ -48,6 +50,7 @@
 
 #modal input:focus, 
 #modal select:focus, 
+#modal Select:focus,
 #modal textarea:focus {
   outline: none;
   border-color: #FF720A;
