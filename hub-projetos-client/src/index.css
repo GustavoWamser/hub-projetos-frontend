@@ -55,7 +55,17 @@ body {
   overflow-y: auto;
 }
 
-.filter-select:focus,
-#filter-search:focus  {
+#input-search input,
+#input-search select {
+  padding: 8px 18px;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-color: #1a1a1a;
+  font-size: 14px;
+}
+
+#input-search input:focus,
+#input-search select:focus {
+  outline: none;
   border: 2px solid #FF720A;
 }
