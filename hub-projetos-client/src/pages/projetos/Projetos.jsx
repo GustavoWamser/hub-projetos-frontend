@@ -14,10 +14,25 @@ function Projetos({ modalAberto, setModalAberto }) {
   const [filtroEmpresa, setFiltroEmpresa] = useState("");
 
   function carregarDados() {
-    axios.get("http://127.0.0.1:8000/api/projetos/").then(res => setProjetos(res.data));
-    axios.get("http://127.0.0.1:8000/api/empresas/").then(res => setEmpresas(res.data));
-    axios.get("http://127.0.0.1:8000/api/membros/").then(res => setMembros(res.data));
-  }
+  Promise.all([
+    axios.get("http://127.0.0.1:8000/api/projetos/"),
+    axios.get("http://127.0.0.1:8000/api/empresas/"),
+    axios.get("http://127.0.0.1:8000/api/membros/"),
+  ]).then(([resProjetos, resEmpresas, resMembros]) => {
+    const projetos = resProjetos.data;
+
+    Promise.all(
+      projetos.map(p =>
+        axios.get(`http://127.0.0.1:8000/api/projetos/${p.id}/num_membros/`)
+          .then(res => ({ ...p, num_membros: res.data.num_members }))
+      )
+    ).then(projetosComMembros => {
+      setProjetos(projetosComMembros);
+      setEmpresas(resEmpresas.data);
+      setMembros(resMembros.data);
+    });
+  });
+}
 
   useEffect(() => {
     carregarDados();

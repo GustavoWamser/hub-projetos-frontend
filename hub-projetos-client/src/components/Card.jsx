@@ -6,8 +6,7 @@ function Card({ tipo, dados, onClick }) {
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g, "")
         .toLowerCase()
-        .replace(/\s+/g, "-")
-    : "";
+        .replace(/\s+/g, "-"): "";
 
   if (tipo === "projeto") {
     return (
@@ -33,7 +32,7 @@ function Card({ tipo, dados, onClick }) {
 
           <div className="info-item">
             <img src="/members.png" alt="members" />
-            <span>{dados.alocacoes.length} membros</span>
+            <span>{dados.num_membros} membros</span>
           </div>
         </div>
       </div>
